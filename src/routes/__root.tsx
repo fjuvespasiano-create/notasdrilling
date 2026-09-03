@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { registerServiceWorker } from "../lib/register-sw";
+import { OfflineBanner, InstallAppButton } from "../components/pwa";
 
 function NotFoundComponent() {
   return (
@@ -90,6 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "author", content: "Drilling do Brasil" },
       { name: "theme-color", content: "#17457f" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "Drilling Fiscal" },
       {
         name: "apple-mobile-web-app-status-bar-style",
@@ -109,7 +111,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "manifest", href: "/manifest.json" },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
-      { rel: "apple-touch-icon", href: "/icons/icon-192.png" },
+      { rel: "apple-touch-icon", sizes: "180x180", href: "/icons/apple-touch-icon.png" },
     ],
   }),
 
@@ -142,6 +144,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <OfflineBanner />
+      <div className="fixed bottom-4 right-4 z-50">
+        <InstallAppButton />
+      </div>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
