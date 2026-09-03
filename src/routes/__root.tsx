@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { registerServiceWorker } from "../lib/register-sw";
-import { OfflineBanner } from "../components/pwa";
+import { OfflineBanner, InstallAppButton } from "../components/pwa";
 
 function NotFoundComponent() {
   return (
@@ -145,6 +145,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <OfflineBanner />
+      <div className="fixed bottom-4 right-4 z-50">
+        <InstallAppButton />
+      </div>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
