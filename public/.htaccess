@@ -1,0 +1,44 @@
+# Drilling Fiscal - HostGator / Apache
+# Roteamento SPA + cache de assets + CORS liberado para /api
+
+Options -MultiViews
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Nunca reescrever chamadas ao backend PHP
+  RewriteRule ^api/ - [L]
+
+  # Arquivos e diretórios existentes são servidos direto
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Todo o resto vai para o index.html do React
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType application/json .json
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<FilesMatch "\.(html)$">
+  Header set Cache-Control "no-cache, must-revalidate"
+</FilesMatch>
+
+# O service worker nunca pode ficar em cache
+<Files "sw.js">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</Files>
