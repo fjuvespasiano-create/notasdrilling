@@ -158,7 +158,7 @@ export function gerarDocumentoPdf(
   doc.text(romaneio ? "4. RELAÇÃO DE MATERIAIS" : "4. DISCRIMINAÇÃO DOS PRODUTOS", M, ctx.y + 4);
   ctx.y += 7;
 
-  const colX = [M + 3, M + 14, M + 100, M + 122, M + 145, M + L - 3];
+  const colX = [M + 3, M + 14, M + 98, M + 126, M + 152, M + L - 3];
   doc.setFillColor(...AZUL);
   doc.rect(M, ctx.y, L, 7, "F");
   doc.setTextColor(255, 255, 255);
@@ -166,8 +166,8 @@ export function gerarDocumentoPdf(
   doc.text("ITEM", colX[0]!, ctx.y + 4.7);
   doc.text("DESCRIÇÃO", colX[1]!, ctx.y + 4.7);
   doc.text("QTD.", colX[2]!, ctx.y + 4.7);
-  doc.text("PESO (KG)", colX[3]!, ctx.y + 4.7);
-  doc.text("VLR. UNIT.", colX[4]!, ctx.y + 4.7);
+  doc.text("PESO (KG)", colX[3]!, ctx.y + 4.7, { align: "right" });
+  doc.text("VLR. UNIT.", colX[4]!, ctx.y + 4.7, { align: "right" });
   doc.text("TOTAL", colX[5]!, ctx.y + 4.7, { align: "right" });
   ctx.y += 7;
 
@@ -190,8 +190,12 @@ export function gerarDocumentoPdf(
     doc.text(String(n + 1).padStart(2, "0"), colX[0]!, ctx.y + 5.4);
     desc.slice(0, 3).forEach((linha, k) => doc.text(linha, colX[1]!, ctx.y + 5.4 + k * 4.2));
     doc.text(item.quantidade || "0", colX[2]!, ctx.y + 5.4);
-    doc.text(num(item.peso) ? `${num(item.peso).toLocaleString("pt-BR")}` : "-", colX[3]!, ctx.y + 5.4);
-    doc.text(num(item.valor) ? moeda(num(item.valor)) : "-", colX[4]!, ctx.y + 5.4);
+    doc.text(num(item.peso) ? num(item.peso).toLocaleString("pt-BR") : "-", colX[3]!, ctx.y + 5.4, {
+      align: "right",
+    });
+    doc.text(num(item.valor) ? moeda(num(item.valor)) : "-", colX[4]!, ctx.y + 5.4, {
+      align: "right",
+    });
     doc.setFont("helvetica", "bold");
     doc.text(
       moeda(num(item.quantidade) * num(item.valor)),
