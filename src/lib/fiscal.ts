@@ -2,6 +2,7 @@ export type ItemCarga = {
   id: string;
   descricao: string;
   quantidade: string;
+  peso: string;
   valor: string;
 };
 
@@ -47,6 +48,7 @@ export const novoItem = (): ItemCarga => ({
   id: Math.random().toString(36).slice(2, 9),
   descricao: "",
   quantidade: "1",
+  peso: "",
   valor: "",
 });
 
@@ -112,7 +114,9 @@ export function montarEspelho(f: FormularioFiscal): string {
   f.itens.forEach((i, n) => {
     const q = parseFloat(i.quantidade.replace(",", ".")) || 0;
     const v = parseFloat(i.valor.replace(/\./g, "").replace(",", ".")) || 0;
-    linhas.push(`${n + 1}) ${i.descricao || "-"} — Qtd ${i.quantidade || "0"} — ${moeda(q * v)}`);
+    linhas.push(
+      `${n + 1}) ${i.descricao || "-"} — Qtd ${i.quantidade || "0"} — Peso ${i.peso || "0"} kg — ${moeda(q * v)}`,
+    );
   });
   linhas.push("");
   linhas.push(`Peso bruto total: ${f.pesoBruto || "0"} kg`);
