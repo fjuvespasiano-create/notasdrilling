@@ -105,7 +105,7 @@ function campo(doc: jsPDF, rotulo: string, valor: string, x: number, y: number, 
 
 export function gerarDocumentoPdf(
   f: FormularioFiscal,
-  opcoes: { protocolo?: string } = {},
+  opcoes: { protocolo?: string | undefined } = {},
 ): jsPDF {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const agora = new Date();
