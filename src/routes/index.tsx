@@ -276,7 +276,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">3. Transporte</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">2. Transporte</h2>
               <div className="grid grid-cols-2 gap-2">
                 {(["Frota Própria (Drilling)", "Transportador Terceirizado"] as const).map((op) => (
                   <button
@@ -331,7 +331,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">2. Tipo de operação</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">3. Tipo de operação</h2>
               <select
                 className="field-input"
                 value={form.tipoOperacao}
@@ -344,7 +344,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">3. Fotos</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">4. Fotos</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 <FotoInput
                   titulo="CNH do motorista"
