@@ -484,7 +484,7 @@ function App() {
                       onChange={(e) => atualizarItem(item.id, "descricao", e.target.value)}
                       placeholder="Ex.: COMPLEMENTO DA FUWA GG09"
                     />
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                       <div>
                         <label className="field-label">Qtd.</label>
                         <input
@@ -492,6 +492,16 @@ function App() {
                           inputMode="decimal"
                           value={item.quantidade}
                           onChange={(e) => atualizarItem(item.id, "quantidade", e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="field-label">Peso (kg)</label>
+                        <input
+                          className="field-input"
+                          inputMode="decimal"
+                          value={item.peso}
+                          onChange={(e) => atualizarItem(item.id, "peso", e.target.value)}
+                          placeholder="0"
                         />
                       </div>
                       <div>
