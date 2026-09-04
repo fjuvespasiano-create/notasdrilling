@@ -12,6 +12,8 @@ import {
   Trash2,
   Truck,
   Wifi,
+  FileText,
+  Share2,
 } from "lucide-react";
 import {
   ORIGENS,
@@ -25,8 +27,10 @@ import {
   enviarPreEmissao,
   valorTotal,
   type FormularioFiscal,
+  tituloDocumento,
   type ItemCarga,
 } from "@/lib/fiscal";
+import { baixarPdf, compartilharPdf } from "@/lib/pdf";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -131,6 +135,8 @@ function App() {
   };
 
   const validar = () => {
+    if (form.documento === "Romaneio" && !form.romaneioNumero.trim())
+      return "Informe o número do romaneio.";
     if (!form.destinoObra.trim()) return "Informe o nome da obra de destino.";
     if (!form.motoristaNome.trim()) return "Informe o nome do motorista.";
     if (!form.placaCavalo.trim()) return "Informe a placa do cavalo.";
@@ -234,7 +240,43 @@ function App() {
         {etapa === "form" && (
           <>
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">1. Transporte</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">1. Tipo de documento</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {(["Espelho de Nota de Remessa", "Romaneio"] as const).map((op) => (
+                  <button
+                    key={op}
+                    type="button"
+                    onClick={() => set("documento", op)}
+                    className={`rounded-lg border-2 px-3 py-4 text-sm font-semibold transition-colors ${
+                      form.documento === op
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-secondary text-secondary-foreground"
+                    }`}
+                  >
+                    {op === "Romaneio" ? "Romaneio (sem NF)" : "Espelho de Nota de Remessa"}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {form.documento === "Romaneio"
+                  ? "Movimentações internas em MG/BH que não geram nota fiscal."
+                  : "Gera o espelho para o setor fiscal emitir a Nota Fiscal de remessa."}
+              </p>
+              {form.documento === "Romaneio" && (
+                <div className="mt-3 rounded-lg bg-muted p-3">
+                  <label className="field-label">Nº do romaneio</label>
+                  <input
+                    className="field-input"
+                    value={form.romaneioNumero}
+                    onChange={(e) => set("romaneioNumero", e.target.value)}
+                    placeholder="Ex.: 2026-0148"
+                  />
+                </div>
+              )}
+            </section>
+
+            <section className="panel">
+              <h2 className="mb-3 text-base font-bold uppercase">2. Transporte</h2>
               <div className="grid grid-cols-2 gap-2">
                 {(["Frota Própria (Drilling)", "Transportador Terceirizado"] as const).map((op) => (
                   <button
@@ -289,7 +331,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">2. Tipo de operação</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">3. Tipo de operação</h2>
               <select
                 className="field-input"
                 value={form.tipoOperacao}
@@ -302,7 +344,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">3. Fotos</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">4. Fotos</h2>
               <div className="grid gap-3 sm:grid-cols-2">
                 <FotoInput
                   titulo="CNH do motorista"
@@ -319,7 +361,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">4. Origem e destino</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">5. Origem e destino</h2>
               <div className="space-y-3">
                 <div>
                   <label className="field-label">Origem</label>
@@ -363,7 +405,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">5. Motorista e veículo</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">6. Motorista e veículo</h2>
               <div className="space-y-3">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
@@ -411,7 +453,7 @@ function App() {
 
             <section className="panel">
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-base font-bold uppercase">6. Carga</h2>
+                <h2 className="text-base font-bold uppercase">7. Carga</h2>
                 <span className="text-sm font-semibold text-primary">{moeda(total)}</span>
               </div>
               <div className="space-y-3">
@@ -476,7 +518,7 @@ function App() {
             </section>
 
             <section className="panel">
-              <h2 className="mb-3 text-base font-bold uppercase">7. Totais e observações</h2>
+              <h2 className="mb-3 text-base font-bold uppercase">8. Totais e observações</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="field-label">Peso bruto (kg)</label>
@@ -518,9 +560,11 @@ function App() {
 
         {etapa === "espelho" && (
           <section className="panel">
-            <h2 className="mb-1 text-lg font-bold uppercase">Espelho da nota</h2>
+            <h2 className="mb-1 text-lg font-bold uppercase">{tituloDocumento(form)}</h2>
             <p className="mb-3 text-sm text-muted-foreground">
-              Confira e copie para o WhatsApp do setor fiscal.
+              {form.documento === "Romaneio"
+                ? "Confira, gere o PDF do romaneio e envie ao responsável."
+                : "Confira e copie para o WhatsApp do setor fiscal."}
             </p>
             <pre className="max-h-[45vh] overflow-auto whitespace-pre-wrap rounded-lg bg-muted p-3 font-mono text-[13px] leading-relaxed text-foreground">
               {espelho}
@@ -532,6 +576,20 @@ function App() {
               {copiado ? <Check className="size-5" /> : <ClipboardCopy className="size-5" />}
               {copiado ? "Copiado!" : "Copiar para WhatsApp"}
             </button>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => baixarPdf(form, protocolo)}
+                className="flex items-center justify-center gap-2 rounded-lg bg-primary py-4 text-sm font-bold uppercase text-primary-foreground"
+              >
+                <FileText className="size-5" /> Gerar PDF
+              </button>
+              <button
+                onClick={() => void compartilharPdf(form, protocolo)}
+                className="flex items-center justify-center gap-2 rounded-lg border-2 border-primary py-4 text-sm font-bold uppercase text-primary"
+              >
+                <Share2 className="size-5" /> Compartilhar
+              </button>
+            </div>
             {erro && (
               <p className="mt-3 rounded-lg bg-destructive/10 px-4 py-3 text-sm font-semibold text-destructive">
                 {erro}
@@ -553,8 +611,22 @@ function App() {
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-steel py-4 text-sm font-bold uppercase text-primary-foreground"
             >
               {copiado ? <Check className="size-5" /> : <ClipboardCopy className="size-5" />}
-              {copiado ? "Copiado!" : "Copiar espelho"}
+              {copiado ? "Copiado!" : "Copiar texto"}
             </button>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => baixarPdf(form, protocolo)}
+                className="flex items-center justify-center gap-2 rounded-lg bg-primary py-4 text-sm font-bold uppercase text-primary-foreground"
+              >
+                <FileText className="size-5" /> Gerar PDF
+              </button>
+              <button
+                onClick={() => void compartilharPdf(form, protocolo)}
+                className="flex items-center justify-center gap-2 rounded-lg border-2 border-primary py-4 text-sm font-bold uppercase text-primary"
+              >
+                <Share2 className="size-5" /> Compartilhar
+              </button>
+            </div>
             <button
               onClick={recomecar}
               className="mt-2 w-full rounded-lg border-2 border-primary py-4 text-sm font-bold uppercase text-primary"

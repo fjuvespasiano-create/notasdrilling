@@ -5,7 +5,11 @@ export type ItemCarga = {
   valor: string;
 };
 
+export type TipoDocumento = "Romaneio" | "Espelho de Nota de Remessa";
+
 export type FormularioFiscal = {
+  documento: TipoDocumento;
+  romaneioNumero: string;
   transporte: "Frota Própria (Drilling)" | "Transportador Terceirizado";
   transportadoraRazao: string;
   transportadoraCnpj: string;
@@ -47,6 +51,8 @@ export const novoItem = (): ItemCarga => ({
 });
 
 export const formularioInicial = (): FormularioFiscal => ({
+  documento: "Espelho de Nota de Remessa",
+  romaneioNumero: "",
   transporte: "Frota Própria (Drilling)",
   transportadoraRazao: "",
   transportadoraCnpj: "",
@@ -66,6 +72,9 @@ export const formularioInicial = (): FormularioFiscal => ({
   observacoes: "",
 });
 
+export const tituloDocumento = (f: FormularioFiscal) =>
+  f.documento === "Romaneio" ? "Romaneio de Carga" : "Espelho de Nota de Remessa";
+
 export const origemFinal = (f: FormularioFiscal) =>
   f.origem === "Outro..." ? f.origemOutro : f.origem;
 
@@ -81,7 +90,8 @@ export const valorTotal = (itens: ItemCarga[]) =>
 
 export function montarEspelho(f: FormularioFiscal): string {
   const linhas: string[] = [];
-  linhas.push("*PRÉ-EMISSÃO NF / CTe — DRILLING DO BRASIL*");
+  linhas.push(`*${tituloDocumento(f).toUpperCase()} — DRILLING DO BRASIL*`);
+  if (f.documento === "Romaneio") linhas.push(`Romaneio nº: ${f.romaneioNumero || "-"}`);
   linhas.push(`Operação: ${f.tipoOperacao}`);
   linhas.push(`Transporte: ${f.transporte}`);
   if (f.transporte === "Transportador Terceirizado") {
