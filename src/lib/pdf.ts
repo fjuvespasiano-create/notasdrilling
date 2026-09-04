@@ -115,7 +115,7 @@ export function gerarDocumentoPdf(
   const ctx: Ctx = { doc, y: 39 };
 
   // Operação
-  secao(ctx, "1. Operação", 24);
+  secao(ctx, "1. Operação", 22);
   campo(doc, "Natureza da operação", f.tipoOperacao, M + 6, ctx.y + 11, 105);
   campo(
     doc,
@@ -125,11 +125,11 @@ export function gerarDocumentoPdf(
     ctx.y + 11,
     55,
   );
-  ctx.y += 24 + 5;
+  ctx.y += 22 + 5;
 
   // Transporte
   const terceiro = f.transporte === "Transportador Terceirizado";
-  const hTransp = terceiro ? 36 : 26;
+  const hTransp = terceiro ? 41 : 30;
   secao(ctx, "2. Transporte e motorista", hTransp);
   campo(doc, "Transporte", f.transporte, M + 6, ctx.y + 11, 60);
   campo(doc, "Motorista", f.motoristaNome, M + 72, ctx.y + 11, 55);
@@ -137,18 +137,18 @@ export function gerarDocumentoPdf(
   campo(doc, "Placa cavalo", f.placaCavalo.toUpperCase(), M + 6, ctx.y + 22, 40);
   campo(doc, "Placa carreta", f.placaCarreta.toUpperCase(), M + 72, ctx.y + 22, 40);
   if (terceiro) {
-    campo(doc, "Transportadora", f.transportadoraRazao, M + 6, ctx.y + 32, 60);
-    campo(doc, "CNPJ", f.transportadoraCnpj, M + 72, ctx.y + 32, 55);
-    campo(doc, "ANTT / RNTRC", f.transportadoraAntt, M + 132, ctx.y + 32, 45);
+    campo(doc, "Transportadora", f.transportadoraRazao, M + 6, ctx.y + 33, 60);
+    campo(doc, "CNPJ", f.transportadoraCnpj, M + 72, ctx.y + 33, 55);
+    campo(doc, "ANTT / RNTRC", f.transportadoraAntt, M + 132, ctx.y + 33, 45);
   }
   ctx.y += hTransp + 5;
 
   // Origem / destino
-  secao(ctx, "3. Origem e destino", 26);
+  secao(ctx, "3. Origem e destino", 33);
   campo(doc, "Origem", origemFinal(f), M + 6, ctx.y + 11, 80);
   campo(doc, "Obra de destino", f.destinoObra, M + 96, ctx.y + 11, 80);
-  campo(doc, "Endereço de entrega", f.destinoEndereco, M + 6, ctx.y + 21, 170);
-  ctx.y += 26 + 5;
+  campo(doc, "Endereço de entrega", f.destinoEndereco, M + 6, ctx.y + 23, 170);
+  ctx.y += 33 + 5;
 
   // Itens
   const itens = f.itens.filter((i) => i.descricao.trim() || num(i.valor) > 0);
