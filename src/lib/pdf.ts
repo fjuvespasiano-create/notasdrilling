@@ -240,7 +240,7 @@ export function gerarDocumentoPdf(
   ctx.y += hObs + 10;
 
   // Assinaturas
-  if (ctx.y > 245) {
+  if (ctx.y > 268) {
     doc.addPage();
     ctx.y = 40;
   }
